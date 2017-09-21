@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="com.nieyue.dao.ActivityCateDao">
+<!-- 添加活动类型 -->
+<insert id="addActivityCate" parameterType="ActivityCate" keyProperty="activityCateId" flushCache="true"  >  
+   INSERT IGNORE INTO
+   		  activity_cate_tb 
+   		 (name,update_date)
+   VALUES
+    	 (#{name},#{updateDate})  
+</insert>  
+<!-- 更新活动类型 -->
+<update id="updateActivityCate" parameterType="ActivityCate" >  
+    UPDATE 
+    	activity_cate_tb 
+    SET 
+    	name=#{name},
+    	update_date=#{updateDate}
+    WHERE
+    	 activity_cate_id=#{activityCateId} 
+</update> 
+<!-- 删除活动类型-->
+<delete id="delActivityCate"  parameterType="Integer" >  
+    DELETE FROM
+    	 activity_cate_tb 
+    	 WHERE activity_cate_id=#{activityCateId}
+</delete>  
+<!-- 加载活动类型-->
+<select id="loadActivityCate" parameterType="Integer" resultType="ActivityCate" >
+SELECT 
+		activity_cate_id,
+	 	name,
+    	update_date
+FROM activity_cate_tb 
+WHERE activity_cate_id=#{activityCateId}
+</select>
+
+<!-- 分页查询活动类型-->
+<select id="browsePagingActivityCate" resultType="ActivityCate">  
+        SELECT
+	    activity_cate_id,
+	 	name,
+    	update_date
+	FROM activity_cate_tb
+	WHERE ${orderName} 
+	<if test="orderWay=='asc'">
+	<![CDATA[>=]]> 
+	</if>
+	<if test="orderWay=='desc'">
+	  <![CDATA[<= ]]>
+	</if>
+	(SELECT ${orderName} FROM activity_cate_tb 
+		ORDER BY 
+			${orderName}  ${orderWay}
+		LIMIT #{pageNum}, 1
+		) 
+	ORDER BY
+		${orderName}  ${orderWay}
+	LIMIT
+		#{pageSize}
+</select> 
+
+<!-- 统计记录条数 -->
+<select id="countAll"  resultType="int">  
+	SELECT
+	 	count(activity_cate_id)
+	FROM activity_cate_tb
+</select>   
+   
+ 
+</mapper>

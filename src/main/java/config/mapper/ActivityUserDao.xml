@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="com.nieyue.dao.ActivityUserDao">
+<!-- 添加活动用户 -->
+<insert id="addActivityUser" parameterType="ActivityUser" keyProperty="activityUserId" flushCache="true"  >  
+   INSERT IGNORE INTO
+   		  activity_user_tb 
+   		 (
+   		 name,
+   		 phone,
+   		 address,
+   		 create_date,
+   		 update_date,
+   		 acount_id,
+   		 activity_id
+   		 )
+   VALUES
+    	 (
+    	 #{name},
+    	 #{phone},
+    	 #{address},
+    	 #{createDate},
+    	 #{updateDate},
+    	 #{acountId},
+    	 #{activityId}
+    	 )  
+</insert>  
+<!-- 更新活动用户 -->
+<update id="updateActivityUser" parameterType="ActivityUser" >  
+    UPDATE 
+    	activity_user_tb 
+    <set>
+    <if test="name!=null">
+    	name=#{name},
+    </if>
+    <if test="phone!=null">
+    	phone=#{phone},
+    </if>
+    <if test="address!=null">
+    	address=#{address},
+    </if>
+    <if test="createDate!=null">
+    	create_date=#{createDate},
+    </if>
+    <if test="updateDate!=null">
+    	update_date=#{updateDate},
+    </if>
+    <if test="acountId!=null">
+    	acount_id=#{acountId},
+    </if>
+    <if test="activityId!=null">
+    	activity_id=#{activityId},
+    </if>
+    </set>
+    WHERE
+    	activity_user_id=#{activityUserId} 
+</update> 
+<!-- 删除活动用户-->
+<delete id="delActivityUserOrder"  parameterType="Integer" >  
+    DELETE FROM
+    	 activity_user_tb 
+    	 WHERE activity_user_id=#{activityUserId}
+</delete>  
+<!-- 加载活动用户-->
+<select id="loadActivityUser" parameterType="Integer" resultType="ActivityUser" >
+SELECT 
+		 activity_user_id,
+	 	 name,
+	 	 phone,
+	 	 address,
+   		 create_date,
+   		 update_date,
+   		 acount_id,
+   		 activity_id
+FROM activity_user_tb 
+WHERE activity_user_id=#{activityUserId}
+</select>
+
+<!-- 分页查询活动用户-->
+<select id="browsePagingActivityUser" resultType="ActivityUser">  
+        SELECT
+	     activity_user_id,
+	 	 name,
+	 	 phone,
+	 	 address,
+   		 create_date,
+   		 update_date,
+   		 acount_id,
+   		 activity_id
+	FROM activity_user_tb
+	<where>
+	<if test="acountId!=null">
+	AND acount_id=#{acountId}
+	</if>
+	 <if test="activityId!=null">
+   	AND	activity_id=#{activityId}
+    </if>
+	<if test="createDate!=null">
+	AND DATE(create_date)=DATE(#{createDate})
+	</if>
+	<if test="updateDate!=null">
+	AND DATE(update_date)=DATE(#{updateDate})
+	</if>
+	AND ${orderName} 
+	<if test="orderWay=='asc'">
+	<![CDATA[>=]]> 
+	</if>
+	<if test="orderWay=='desc'">
+	  <![CDATA[<= ]]>
+	</if>
+	(SELECT ${orderName} FROM activity_user_tb 
+	<where>
+	<if test="acountId!=null">
+	AND acount_id=#{acountId}
+	</if>
+	<if test="activityId!=null">
+   	AND	activity_id=#{activityId}
+    </if>
+	<if test="createDate!=null">
+	AND DATE(create_date)=DATE(#{createDate})
+	</if>
+	<if test="updateDate!=null">
+	AND DATE(update_date)=DATE(#{updateDate})
+	</if>
+	</where>
+		ORDER BY 
+			${orderName}  ${orderWay}
+		LIMIT #{pageNum}, 1
+		) 
+	</where>
+	ORDER BY
+		${orderName}  ${orderWay}
+	LIMIT
+		#{pageSize}
+</select> 
+
+<!-- 统计记录条数 -->
+<select id="countAll"  resultType="int">  
+	SELECT
+	 	count(activity_user_id)
+	FROM activity_user_tb
+	<where>
+		<if test="acountId!=null">
+	AND acount_id=#{acountId}
+	</if>
+	<if test="activityId!=null">
+   	AND	activity_id=#{activityId}
+    </if>
+	<if test="createDate!=null">
+	AND DATE(create_date)=DATE(#{createDate})
+	</if>
+	<if test="updateDate!=null">
+	AND DATE(update_date)=DATE(#{updateDate})
+	</if>
+	</where>
+</select>   
+   
+ 
+</mapper>

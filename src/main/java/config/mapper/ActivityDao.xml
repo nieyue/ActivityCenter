@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="com.nieyue.dao.ActivityDao">
+<!-- 添加活动 -->
+<insert id="addActivity" parameterType="Activity" keyProperty="activityId" flushCache="true"  >  
+   INSERT IGNORE INTO
+   		  activity_tb 
+   		 (
+   		 title,
+   		 summary,
+   		 target,
+   		 img_address,
+   		 content,
+   		 pvs,
+   		 uvs,
+   		 ips,
+   		 reading_number,
+   		 status,
+   		 activity_cate_id,
+   		 start_date,
+   		 end_date,
+   		 create_date,
+   		 update_date)
+   VALUES
+    	 (
+    	 #{title},
+    	 #{summary},
+    	 #{target},
+    	 #{imgAddress},
+    	 #{content},
+    	 #{pvs},
+    	 #{uvs},
+    	 #{ips},
+    	 #{readingNumber},
+    	 #{status},
+    	 #{activityCateId},
+    	 #{startDate},
+    	 #{endDate},
+    	 #{createDate},
+    	 #{updateDate})  
+</insert>  
+<!-- 更新活动 -->
+<update id="updateActivity" parameterType="Activity" >  
+    UPDATE 
+    	activity_tb 
+   <set>
+    	<if test="title!=null">
+    	title=#{title},
+    	</if>
+    	<if test="summary!=null">
+    	summary=#{summary},
+    	</if>
+    	<if test="target!=null">
+    	target=#{target},
+    	</if>
+    	<if test="imgAddress!=null">
+    	img_address=#{imgAddress},
+    	</if>
+    	<if test="content!=null">
+    	content=#{content},
+    	</if>
+    	<if test="pvs!=null">
+    	pvs=#{pvs},
+    	</if>
+    	<if test="uvs!=null">
+    	uvs=#{uvs},
+    	</if>
+    	<if test="ips!=null">
+    	ips=#{ips},
+    	</if>
+    	<if test="readingNumber!=null">
+    	reading_number=#{readingNumber},
+    	</if>
+    	<if test="status!=null">
+    	status=#{status},
+    	</if>
+    	<if test="activityCateId!=null">
+    	activity_cate_id=#{activityCateId},
+    	</if>
+    	<if test="startDate!=null">
+    	start_date=#{startDate},
+    	</if>
+    	<if test="endDate!=null">
+    	end_date=#{endDate},
+    	</if>
+    	<if test="createDate!=null">
+    	create_date=#{createDate},
+    	</if>
+    	<if test="updateDate!=null">
+    	update_date=#{updateDate}
+    	</if>
+   </set> 
+    WHERE
+    	 activity_id=#{activityId} 
+</update> 
+<!-- 删除活动-->
+<delete id="delActivity"  parameterType="Integer" >  
+    DELETE FROM
+    	 activity_tb 
+    	 WHERE activity_id=#{activityId}
+</delete>  
+<!-- 加载活动-->
+<select id="loadActivity" parameterType="Integer" resultType="Activity" >
+SELECT 
+		 activity_id,
+	 	 title,
+   		 summary,
+   		 target,
+   		 img_address,
+   		 content,
+   		 pvs,
+   		 uvs,
+   		 ips,
+   		 reading_number,
+   		 status,
+   		 activity_cate_id,
+   		 start_date,
+   		 end_date,
+   		 create_date,
+   		 update_date
+FROM activity_tb 
+WHERE activity_id=#{activityId}
+</select>
+<!-- 加载small活动-->
+<select id="loadSmallActivity" parameterType="Integer" resultType="Activity" >
+SELECT 
+		 activity_id,
+	 	 title,
+   		 summary,
+   		 target,
+   		 img_address,
+   		 <!-- content, -->
+   		 pvs,
+   		 uvs,
+   		 ips,
+   		 reading_number,
+   		 status,
+   		 activity_cate_id,
+   		 start_date,
+   		 end_date,
+   		 create_date,
+   		 update_date
+FROM activity_tb 
+WHERE activity_id=#{activityId}
+</select>
+
+<!-- 分页查询活动-->
+<select id="browsePagingActivity" resultType="Activity">  
+        SELECT 
+		 activity_id,
+	 	 title,
+   		 summary,
+   		 target,
+   		 img_address,
+   		 content,
+   		 pvs,
+   		 uvs,
+   		 ips,
+   		 reading_number,
+   		 status,
+   		 activity_cate_id,
+   		 start_date,
+   		 end_date,
+   		 create_date,
+   		 update_date
+FROM activity_tb 
+	<where>
+	<if test="readingNumber!=null">
+	AND reading_number=#{readingNumber}
+	</if>
+	<if test="activityCateId!=null">
+	AND activity_cate_id=#{activityCateId}
+	</if>
+	<if test="startDate!=null">
+	AND DATE(start_date)=DATE(#{startDate})
+	</if>
+	<if test="endDate!=null">
+	AND DATE(end_date)=DATE(#{endDate})
+	</if>
+	<if test="createDate!=null">
+	AND DATE(create_date)=DATE(#{createDate})
+	</if>
+	<if test="updateDate!=null">
+	AND DATE(update_date)=DATE(#{updateDate})
+	</if>
+	<if test="status!=null">
+	AND status=#{status}
+	</if>
+	AND ${orderName} 
+	<if test="orderWay=='asc'">
+	<![CDATA[>=]]> 
+	</if>
+	<if test="orderWay=='desc'">
+	  <![CDATA[<= ]]>
+	</if>
+	(SELECT ${orderName} FROM activity_tb 
+	<where>
+	<if test="readingNumber!=null">
+	AND reading_number=#{readingNumber}
+	</if>
+	<if test="activityCateId!=null">
+	AND activity_cate_id=#{activityCateId}
+	</if>
+	<if test="startDate!=null">
+	AND DATE(start_date)=DATE(#{startDate})
+	</if>
+	<if test="endDate!=null">
+	AND DATE(end_date)=DATE(#{endDate})
+	</if>
+	<if test="createDate!=null">
+	AND DATE(create_date)=DATE(#{createDate})
+	</if>
+	<if test="updateDate!=null">
+	AND DATE(update_date)=DATE(#{updateDate})
+	</if>
+	<if test="status!=null">
+	AND status=#{status}
+	</if>
+	</where>
+		ORDER BY 
+			${orderName}  ${orderWay}
+		LIMIT #{pageNum}, 1
+		) 
+	</where>
+	ORDER BY
+		${orderName}  ${orderWay}
+	LIMIT
+		#{pageSize}
+</select> 
+
+<!-- 统计记录条数 -->
+<select id="countAll"  resultType="int">  
+	SELECT
+	 	count(activity_id)
+	FROM activity_tb
+	<where>
+	<if test="readingNumber!=null">
+	AND reading_number=#{readingNumber}
+	</if>
+	<if test="activityCateId!=null">
+	AND activity_cate_id=#{activityCateId}
+	</if>
+	<if test="startDate!=null">
+	AND DATE(start_date)=DATE(#{startDate})
+	</if>
+	<if test="endDate!=null">
+	AND DATE(end_date)=DATE(#{endDate})
+	</if>
+	<if test="createDate!=null">
+	AND DATE(create_date)=DATE(#{createDate})
+	</if>
+	<if test="updateDate!=null">
+	AND DATE(update_date)=DATE(#{updateDate})
+	</if>
+	<if test="status!=null">
+	AND status=#{status}
+	</if>
+	</where>
+</select>   
+   
+ 
+</mapper>
